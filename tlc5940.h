@@ -39,6 +39,11 @@
 // These options are not configurable because they rely on specific hardware
 // features of the ATmega328P that are only available on specific pins.
 #if (TLC5940_USART_MSPIM)
+#if defined (__AVR_ATmega48P__)  || defined (__AVR_ATmega48__)   \
+ || defined (__AVR_ATmega88P__)  || defined (__AVR_ATmega88__)   \
+ || defined (__AVR_ATmega168__)  || defined (__AVR_ATmega168P__) \
+ || defined (__AVR_ATmega328__) || defined (__AVR_ATmega328P__)
+
 #define SIN_DDR DDRD
 #define SIN_PORT PORTD
 #define SIN_PIN PD1
@@ -46,7 +51,31 @@
 #define SCLK_DDR DDRD
 #define SCLK_PORT PORTD
 #define SCLK_PIN PD4
+
+#elif defined (__AVR_ATmega164__) || defined (__AVR_ATmega164P__) \
+   || defined (__AVR_ATmega324__) || defined (__AVR_ATmega324P__) \
+   || defined (__AVR_ATmega644__) || defined (__AVR_ATmega644P__) \
+   || defined (__AVR_ATmega1284__) || defined (__AVR_ATmega1284P__)
+
+#define SIN_DDR DDRD
+#define SIN_PORT PORTD
+#define SIN_PIN PD1
+
+#define SCLK_DDR DDRB
+#define SCLK_PORT PORTB
+#define SCLK_PIN PB0
+
+#else // defined(__AVR_ATmegaXXX__)
+#error "Unknown chip. Edit tlc5940.h and add pinouts."
+#endif // defined(__AVR_ATmegaXXX__)
+
 #else // TLC5940_USART_MSPIM
+
+#if defined (__AVR_ATmega48P__)  || defined (__AVR_ATmega48__)   \
+ || defined (__AVR_ATmega88P__)  || defined (__AVR_ATmega88__)   \
+ || defined (__AVR_ATmega168__)  || defined (__AVR_ATmega168P__) \
+ || defined (__AVR_ATmega328__) || defined (__AVR_ATmega328P__)
+
 #define SIN_DDR DDRB
 #define SIN_PORT PORTB
 #define SIN_PIN PB3
@@ -58,6 +87,28 @@
 #define BLANK_DDR DDRB
 #define BLANK_PORT PORTB
 #define BLANK_PIN PB2
+
+#elif defined (__AVR_ATmega164__) || defined (__AVR_ATmega164P__) \
+   || defined (__AVR_ATmega324__) || defined (__AVR_ATmega324P__) \
+   || defined (__AVR_ATmega644__) || defined (__AVR_ATmega644P__) \
+   || defined (__AVR_ATmega1284__) || defined (__AVR_ATmega1284P__)
+
+#define SIN_DDR DDRB
+#define SIN_PORT PORTB
+#define SIN_PIN PB5
+
+#define SCLK_DDR DDRB
+#define SCLK_PORT PORTB
+#define SCLK_PIN PB7
+
+#define BLANK_DDR DDRB
+#define BLANK_PORT PORTB
+#define BLANK_PIN PB4
+
+#else // defined(__AVR_ATmegaXXX__)
+#error "Unknown chip. Edit tlc5940.h and add pinouts."
+#endif // defined(__AVR_ATmegaXXX__)
+
 #endif // TLC5940_USART_MSPIM
 
 // --------------------------------------------------------
@@ -99,7 +150,9 @@
 #define numChannels ((channel_t)16 * TLC5940_N)
 
 #if (TLC5940_ENABLE_MULTIPLEXING)
+#if (!TLC5940_USE_ROW_SHIFT_REGISTER)
 extern uint8_t toggleRows[TLC5940_MULTIPLEX_N];
+#endif // TLC5940_USE_ROW_SHIFT_REGISTER
 extern uint8_t gsData[TLC5940_MULTIPLEX_N][gsDataSize];
 extern uint8_t *pBack;
 #else // TLC5940_ENABLE_MULTIPLEXING

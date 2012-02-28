@@ -14,13 +14,15 @@
 #                is connected.
 # FUSES ........ Parameters for avrdude to flash the fuses appropriately.
 
-DEVICE     = atmega328p
+#DEVICE     = atmega328p
+DEVICE     = atmega1284p
 CLOCK      = 20000000
 #CLOCK      = 18432000
 #CLOCK      = 16000000
 #CLOCK      = 8000000
 #CLOCK      = 1000000
-PROGRAMMER = -c avrispmkII -P usb
+#PROGRAMMER = -c avrispmkII -P usb
+PROGRAMMER = -c avrispv2 -P COM6
 OBJECTS    = main.o tlc5940.o
 
 # Default setting for ATmega328P in Arduino Duemilanove
@@ -41,7 +43,7 @@ FUSES      = -U hfuse:w:0xd9:m -U lfuse:w:0xa6:m
 # ---------- Begin TLC5940 Configuration Section ----------
 
 # Defines the number of TLC5940 chips that are connected in series
-TLC5940_N = 4
+TLC5940_N = 1
 
 # Flag for including functions for manually setting the dot correction
 #  0 = Do not include dot correction features (generates smaller code)
@@ -107,8 +109,15 @@ ifeq ($(TLC5940_ENABLE_MULTIPLEXING), 1)
 # Note: Without writing a custom ISR, that can toggle pins from multiple PORT
 #       registers, the maximum number of rows that can be multiplexed is eight.
 #       This option is ignored if TLC5940_ENABLE_MULTIPLEXING = 0
-TLC5940_MULTIPLEX_N = 3
+TLC5940_MULTIPLEX_N = 8
 endif
+
+# Flag to use shift register to control row output instead of multiplexing rows
+# directly. I am using the MIC5891 8-bit serial input latched source driver for
+# the shift register, which can source 500 mA per output. A standard 74HC595
+# could be substitued, but would need to be attached to 8 PNP darlingtons or 
+# P-channel MOSFETs in order to source enough current for the rows.
+TLC5940_USE_ROW_SHIFT_REGISTER = 1
 
 # Flag to use the USART in MSPIM mode, rather than use the SPI Master bus to
 # communicate with the TLC5940. One major advantage of using the USART in MSPIM
@@ -189,6 +198,31 @@ endif
 
 # The following options only apply if TLC5940_ENABLE_MULTIPLEXING = 1
 ifeq ($(TLC5940_ENABLE_MULTIPLEXING), 1)
+ifeq ($(TLC5940_USE_ROW_SHIFT_REGISTER), 1)
+# DDR, PORT, and PIN registers used for driving the row shift register
+# SIN = Serial data in
+# SCLK = Serial clock
+# Note: These options are ignored if TLC5940_USE_ROW_SHIFT_REGISTER = 0
+
+ROW_SIN_DDR = DDRC
+ROW_SIN_PORT = PORTC
+ROW_SIN_PIN = PC6
+
+ROW_SCLK_DDR = DDRC
+ROW_SCLK_PORT = PORTC
+ROW_SCLK_PIN = PC7
+
+# This avoids adding needless defines if TLC5940_ENABLE_MULTIPLEXING = 0
+MULTIPLEXING_DEFINES = -DTLC5940_MULTIPLEX_N=$(TLC5940_MULTIPLEX_N) \
+		       -DTLC5940_USE_ROW_SHIFT_REGISTER=$(TLC5940_USE_ROW_SHIFT_REGISTER) \
+		       -DROW_SIN_DDR=$(ROW_SIN_DDR) \
+		       -DROW_SIN_PORT=$(ROW_SIN_PORT) \
+		       -DROW_SIN_PIN=$(ROW_SIN_PIN) \
+		       -DROW_SCLK_DDR=$(ROW_SCLK_DDR) \
+		       -DROW_SCLK_PORT=$(ROW_SCLK_PORT) \
+		       -DROW_SCLK_PIN=$(ROW_SCLK_PIN)
+else
+
 # DDR, PORT, and PIN registers used for driving the multiplexing IRF9520 MOSFETs
 # Note: All pins used for multiplexing must share the same DDR, PORT, and PIN
 #       registers. These options are ignored if TLC5940_ENABLE_MULTIPLEXING = 0
@@ -215,6 +249,7 @@ MULTIPLEXING_DEFINES = -DTLC5940_MULTIPLEX_N=$(TLC5940_MULTIPLEX_N) \
                        -DR_PIN=$(R_PIN) \
                        -DG_PIN=$(G_PIN) \
                        -DB_PIN=$(B_PIN)
+endif
 endif
 
 # This avoids a redefinition warning if TLC5940_USART_MSPIM = 0

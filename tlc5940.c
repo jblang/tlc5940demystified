@@ -47,7 +47,9 @@
 #if (TLC5940_ENABLE_MULTIPLEXING)
 // In main(), set toggleRows to the two pins that should be toggled
 // to turn OFF the previous row's MOSFET, and ON the current row's MOSFET.
+#if (!TLC5940_USE_ROW_SHIFT_REGISTER)
 uint8_t toggleRows[TLC5940_MULTIPLEX_N];
+#endif
 uint8_t gsData[TLC5940_MULTIPLEX_N][gsDataSize];
 static uint8_t gsDataCache[TLC5940_MULTIPLEX_N][gsDataSize];
 uint8_t *pBack;
@@ -256,6 +258,16 @@ void TLC5940_Init(void) {
   setOutput(BLANK_DDR, BLANK_PIN);
   setOutput(SIN_DDR, SIN_PIN);
 
+#if (TLC5940_USE_ROW_SHIFT_REGISTER)
+  setOutput(ROW_SCLK_DDR, ROW_SCLK_PIN);
+  setOutput(ROW_SIN_DDR, ROW_SIN_PIN);
+
+  // Clear row shift registers
+  setLow(ROW_SIN_PORT, ROW_SIN_PIN);
+  for (int i = 0; i < TLC5940_MULTIPLEX_N; i++)
+    pulse(ROW_SCLK_PORT, ROW_SCLK_PIN);
+#endif
+
   setLow(SCLK_PORT, SCLK_PIN);
   setLow(DCPRG_PORT, DCPRG_PIN);
   setHigh(VPRG_PORT, VPRG_PIN);
@@ -322,7 +334,15 @@ ISR(TIMER0_COMPA_vect) {
   if (getValue(TLC5940_FLAGS, TLC5940_FLAG_XLAT_NEEDS_PULSE)) {
     pulse(XLAT_PORT, XLAT_PIN);
     setLow(TLC5940_FLAGS, TLC5940_FLAG_XLAT_NEEDS_PULSE);
-    MULTIPLEX_PIN = toggleRows[row]; // toggle two pins at once
+#if (TLC5940_USE_ROW_SHIFT_REGISTER)
+    if (row == 0)
+      setHigh(ROW_SIN_PORT, ROW_SIN_PIN);
+    else
+      setLow(ROW_SIN_PORT, ROW_SIN_PIN);
+    pulse(ROW_SCLK_PORT, ROW_SCLK_PIN);
+#else
+   MULTIPLEX_PIN = toggleRows[row]; // toggle two pins at once
+#endif
     if (++row == TLC5940_MULTIPLEX_N)
       row = 0;
   }
@@ -359,7 +379,15 @@ ISR(TIMER0_COMPA_vect) {
   if (xlatNeedsPulse) {
     pulse(XLAT_PORT, XLAT_PIN);
     xlatNeedsPulse = 0;
-    MULTIPLEX_PIN = toggleRows[row]; // toggle two pins at once
+#if (TLC5940_USE_ROW_SHIFT_REGISTER)
+    if (row == 0)
+      setHigh(ROW_SIN_PORT, ROW_SIN_PIN);
+    else
+      setLow(ROW_SIN_PORT, ROW_SIN_PIN);
+    pulse(ROW_SCLK_PORT, ROW_SCLK_PIN);
+#else
+   MULTIPLEX_PIN = toggleRows[row]; // toggle two pins at once
+#endif
     if (++row == TLC5940_MULTIPLEX_N)
       row = 0;
   }
