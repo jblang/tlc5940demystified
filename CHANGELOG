@@ -1,0 +1,4 @@
+Jan 8, 2012
+
+Updated Makefile, tlc5940.c, tlc5940.h to use the newest multiplexing code,
+which has some major speed improvements.

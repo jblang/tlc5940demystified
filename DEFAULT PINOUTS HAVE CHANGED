@@ -1,0 +1,14 @@
+CONNECTING THE HARDWARE
+
+Depending on how many TLC5940 chips are linked in series, you may have
+to change the TLC5940_N variable in firmware/Makefile.
+
+If TLC5940_USART_MSPIM = 0 in firmware/Makefile, connect the hardware
+according to ../../schematics/multiplexing.sch, or
+../../schematics/multiplexing-multi.sch depending on how many TLC5940
+chips are linked in series.
+
+If TLC5940_USART_MSPIM = 1 in firmware/Makefile, connect the hardware
+according to ../../schematics/usart_mspim-multiplexing.sch, or
+../../schematics/usart_mspim-multiplexing-multi.sch depending on how
+many TLC5940 chips are linked in series.

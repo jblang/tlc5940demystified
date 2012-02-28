@@ -1,0 +1,21 @@
+Demystifying the TLC5940 - Chapter 9
+
+Instructions:
+
+  1. Verify that DEVICE, CLOCK, PROGRAMMER, and FUSES are set
+     correctly in the Makefile based on your hardware. The provided
+     Makefile is configured for an ATmega328P running at 20 MHz,
+     using an AVR ISP mkII programmer, with FUSES set to remove the
+     clock divider, to use the external crystal, and to enable clock
+     output.
+
+     The COMPILE parameter is set to use the non-standard -mint8
+     option, so beware if you are add code that is incompatible with
+     -mint8 such as some functions that are part of avr-libc, and any
+     code that doesn't use the defines from <stdint.h>.
+
+  2. To build, type `make`
+
+  3. To set the fuse bits, type `make fuse`
+
+  4. To program the AVR, type `make flash`
