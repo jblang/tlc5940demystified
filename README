@@ -1,4 +1,14 @@
-Demystifying the TLC5940 - Chapter 9
+TLC5940 Demystified Library
+
+Based on Demystifying the TLC5940 - Chapter 9 by Matt Pandina
+
+Modified to use shift register for row multiplexing by J.B. Langston
+
+For more details, see these websites:
+
+http://adventuresinelectronics.blogspot.com/2012/02/my-led-matrix-needs-little-tlc.html
+
+http://sites.google.com/site/artcfox/demystifying-the-tlc5940
 
 Instructions:
 

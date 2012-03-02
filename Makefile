@@ -23,7 +23,7 @@ CLOCK      = 20000000
 #CLOCK      = 1000000
 #PROGRAMMER = -c avrispmkII -P usb
 PROGRAMMER = -c avrispv2 -P COM6
-OBJECTS    = main.o tlc5940.o
+OBJECTS    = main.o tlc5940.o plasma.o
 
 # Default setting for ATmega328P in Arduino Duemilanove
 #FUSES      = -U hfuse:w:0xda:m -U lfuse:w:0xff:m
@@ -170,20 +170,20 @@ BLANK_PIN = PD6
 endif
 
 # DDR, PORT, and PIN connected to DCPRG
-DCPRG_DDR = DDRD
-DCPRG_PORT = PORTD
+DCPRG_DDR = DDRB
+DCPRG_PORT = PORTB
 # DCPRG is always configurable, but the default pin needs to change if
 # the TLC5940 is using USART MSPIM mode, because PD4 is needed for XCK
 ifeq ($(TLC5940_USART_MSPIM), 1)
-DCPRG_PIN = PD3
+DCPRG_PIN = PB3
 else
-DCPRG_PIN = PD4
+DCPRG_PIN = PB4
 endif
 
 # DDR, PORT, and PIN connected to VPRG
-VPRG_DDR = DDRD
-VPRG_PORT = PORTD
-VPRG_PIN = PD7
+VPRG_DDR = DDRB
+VPRG_PORT = PORTB
+VPRG_PIN = PB2
 
 # DDR, PORT, and PIN connected to XLAT
 ifeq ($(TLC5940_USART_MSPIM), 1)
@@ -297,7 +297,7 @@ TLC5940_DEFINES = -DTLC5940_N=$(TLC5940_N) \
 # Tune the lines below only if you know what you are doing:
 
 AVRDUDE    = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE    = avr-gcc -std=gnu99 -Wall -Wextra -Werror -Winline -mint8 -O3 -funroll-loops -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) $(TLC5940_DEFINES)
+COMPILE    = avr-gcc -std=gnu99 -Wall -Wextra -Werror -Winline -O3 -funroll-loops -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) $(TLC5940_DEFINES)
 #COMPILE    = avr-gcc -std=gnu99 -Wall -Wextra -Werror -Winline -O3 -funroll-loops -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) $(TLC5940_DEFINES)
 
 LINK_FLAGS = -lc -lm
