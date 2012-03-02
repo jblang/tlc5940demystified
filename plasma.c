@@ -31,6 +31,9 @@
 #include "tlc5940.h"
 #include "plasma.h"
 
+#define GREEN(x) ((x) * 2)
+#define RED(x) (((x) * 2)  + 1)
+
 float dist(float a, float b, float c, float d) {
   return sqrt((c-a)*(c-a)+(d-b)*(d-b));
 }
@@ -52,11 +55,11 @@ void do_plasma() {
 	  + sin(dist(x, y, 192.0, 100.0) / 8.0);
         color = (uint16_t)(value * 4096) & 0xfff;
         if (color > 2047) {
-          TLC5940_SetGS(y, x*2, color);      // green
-          TLC5940_SetGS(y, x*2+1, 4095 - color); // red
+          TLC5940_SetGS(y, GREEN(x), color);
+          TLC5940_SetGS(y, RED(x), 4095 - color);
         } else {
-          TLC5940_SetGS(y, x*2, 2047 - color);   // green
-          TLC5940_SetGS(y, x*2+1, 2048 + color);    // red
+          TLC5940_SetGS(y, GREEN(x), 2047 - color);
+          TLC5940_SetGS(y, RED(x), 2048 + color);
         }
       }
     }
