@@ -16,6 +16,7 @@
 
 #DEVICE     = atmega328p
 DEVICE     = atmega1284p
+#DEVICE     = atmega644p
 CLOCK      = 20000000
 #CLOCK      = 18432000
 #CLOCK      = 16000000
@@ -23,7 +24,7 @@ CLOCK      = 20000000
 #CLOCK      = 1000000
 #PROGRAMMER = -c avrispmkII -P usb
 PROGRAMMER = -c avrispv2 -P COM6
-OBJECTS    = main.o tlc5940.o plasma.o
+OBJECTS    = main.o tlc5940.o plasma.o scroll.o
 
 # Default setting for ATmega328P in Arduino Duemilanove
 #FUSES      = -U hfuse:w:0xda:m -U lfuse:w:0xff:m

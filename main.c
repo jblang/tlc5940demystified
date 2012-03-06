@@ -30,6 +30,7 @@
 #include <avr/interrupt.h>
 #include "tlc5940.h"
 #include "plasma.h"
+#include "scroll.h"
 
 int main(void) {
   TLC5940_Init();
@@ -59,7 +60,8 @@ int main(void) {
   // Enable Global Interrupts
   sei();
 
-  do_plasma();
+  //do_plasma();
+  scroll(" HELLO WORLD!!! ");
 
   return 0;
 }
