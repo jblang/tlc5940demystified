@@ -61,7 +61,7 @@ int main(void) {
   sei();
 
   //do_plasma();
-  scroll(" HELLO WORLD!!! ");
+  scroll(" hello, TLC5940. ");
 
   return 0;
 }

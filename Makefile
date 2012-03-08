@@ -23,7 +23,7 @@ CLOCK      = 20000000
 #CLOCK      = 8000000
 #CLOCK      = 1000000
 #PROGRAMMER = -c avrispmkII -P usb
-PROGRAMMER = -c avrispv2 -P COM6
+PROGRAMMER = -c avrispv2 -P COM4
 OBJECTS    = main.o tlc5940.o plasma.o scroll.o
 
 # Default setting for ATmega328P in Arduino Duemilanove
